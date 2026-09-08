@@ -1,0 +1,13 @@
+{
+  "name": "aitherfiles-minio-api",
+  "private": true,
+  "type": "module",
+  "scripts": {"start": "node server.js"},
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "firebase-admin": "^13.5.0",
+    "minio": "^8.0.5",
+    "multer": "^2.0.2"
+  }
+}
