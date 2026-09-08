@@ -4,22 +4,24 @@ AitherFiles is a lightweight, mobile-friendly browser file manager for AitherFor
 
 ## Backend
 
-AitherFiles uses **Firebase Authentication + MinIO**.
+AitherFiles uses **Firebase Authentication + Gozunga S3-compatible Object Storage**.
 
 - **Firebase Spark** handles accounts and authentication.
-- **MinIO** handles the actual file objects.
+- **Gozunga Object Storage** handles the actual file objects through its S3-compatible API.
 - The static web app can stay on GitHub Pages.
-- A small Node API in `backend/` verifies Firebase ID tokens and talks to MinIO using private server credentials.
+- A small Node API in `backend/` verifies Firebase ID tokens and talks to Gozunga using private server credentials.
 - Every user's objects live under `users/{Firebase UID}/`, and the API refuses access outside that prefix.
 - The client enforces a **3 GB AitherFiles quota** before uploads.
 
 This avoids Firebase Cloud Storage, so AitherFiles does not require Firebase Storage/Blaze for its file storage.
 
+Gozunga currently advertises **100 GB of object storage free each month with no credit card required**. Its object-storage documentation lists the S3 endpoint as `files.fsd1.gozunga.com`. Actual service limits and account eligibility are controlled by Gozunga. citeturn0search2turn0search3
+
 ## Features
 
 - Firebase Email/Password authentication
 - Firebase Google authentication
-- Private per-user MinIO storage
+- Private per-user Gozunga S3 storage
 - Upload files by picker or drag and drop
 - Search and sort cloud files
 - Recent, images, and documents filters
@@ -35,21 +37,20 @@ This avoids Firebase Cloud Storage, so AitherFiles does not require Firebase Sto
 3. Copy the Web App configuration into `firebase-config.js`.
 4. Create a Firebase service account for the private backend. **Never put its JSON key in the GitHub Pages files.**
 
-## MinIO setup
+## Gozunga setup
 
-1. Run MinIO/AIStor Free on a machine or host you control. MinIO is S3-compatible object storage. The original MinIO Community Edition is now source-only/archived, while MinIO lists AIStor Free as the community standalone option.
-2. Create a bucket named `aitherfiles` (the API can also create it automatically).
-3. Create a MinIO access key with permission to the AitherFiles bucket.
+1. Create a Gozunga account.
+2. Open **Cloud → Object Storage** and create an `aitherfiles` bucket.
+3. Open **Cloud → Access → S3/EC2 Credentials** and create S3 credentials. Gozunga documents `files.fsd1.gozunga.com` as the S3 endpoint. citeturn0search3turn0search6
 4. Run `backend/` with these environment variables:
 
 ```text
 PORT=8787
-MINIO_ENDPOINT=your-minio-host.example.com
-MINIO_PORT=443
-MINIO_USE_SSL=true
-MINIO_ACCESS_KEY=...
-MINIO_SECRET_KEY=...
-MINIO_BUCKET=aitherfiles
+S3_ENDPOINT=https://files.fsd1.gozunga.com
+S3_REGION=SiouxFalls
+S3_ACCESS_KEY=...
+S3_SECRET_KEY=...
+S3_BUCKET=aitherfiles
 AITHERFILES_ORIGIN=https://your-pages-domain.example
 FIREBASE_SERVICE_ACCOUNT_JSON={...}
 ```
@@ -75,8 +76,8 @@ export default minio;
 
 ### Security
 
-The browser never receives the MinIO secret key. It signs in with Firebase, sends its Firebase ID token to the API, and the API verifies that token before reading or changing objects. The API only allows a user to access keys beginning with their own `users/{Firebase UID}/` prefix.
+The browser never receives the Gozunga S3 secret key. It signs in with Firebase, sends its Firebase ID token to the API, and the API verifies that token before reading or changing objects. The API only allows a user to access keys beginning with their own `users/{Firebase UID}/` prefix.
 
 ## Version
 
-AitherFiles 3.1.0 — Firebase Auth + MinIO storage migration
+AitherFiles 3.2.0 — Firebase Auth + Gozunga S3 storage
