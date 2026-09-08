@@ -2,41 +2,81 @@
 
 AitherFiles is a lightweight, mobile-friendly browser file manager for AitherForge.
 
-## Firebase backend
+## Backend
 
-AitherFiles now uses **Firebase Authentication + Cloud Storage** as its primary cloud backend. The web app remains compatible with GitHub Pages because the Firebase Web SDK runs directly in the browser.
+AitherFiles uses **Firebase Authentication + MinIO**.
 
-Each signed-in user gets an isolated storage namespace under `users/{Firebase UID}/`. Firebase Storage Rules restrict reads and writes to the authenticated user's own UID. AitherFiles also enforces a **3 GB app-level quota** in the client before uploads.
+- **Firebase Spark** handles accounts and authentication.
+- **MinIO** handles the actual file objects.
+- The static web app can stay on GitHub Pages.
+- A small Node API in `backend/` verifies Firebase ID tokens and talks to MinIO using private server credentials.
+- Every user's objects live under `users/{Firebase UID}/`, and the API refuses access outside that prefix.
+- The client enforces a **3 GB AitherFiles quota** before uploads.
+
+This avoids Firebase Cloud Storage, so AitherFiles does not require Firebase Storage/Blaze for its file storage.
 
 ## Features
 
 - Firebase Email/Password authentication
 - Firebase Google authentication
-- Per-user private Firebase Storage
+- Private per-user MinIO storage
 - Upload files by picker or drag and drop
 - Search and sort cloud files
 - Recent, images, and documents filters
-- Open and delete cloud files
+- Open/download and delete cloud files
 - 3 GB AitherFiles app quota
 - Responsive iPhone, tablet, and desktop interface
 - GitHub Pages compatible
-- No Render backend required for the browser app
 
 ## Firebase setup
 
-1. Create a Firebase project and register a Web App.
+1. Create a Firebase project on the Spark plan and register a Web App.
 2. Enable **Authentication** and turn on Email/Password and/or Google sign-in.
-3. Create/enable **Cloud Storage**.
-4. Copy the Web App configuration into `firebase-config.js`.
-5. Deploy the rules in `storage.rules` to your Firebase Storage bucket.
-6. Add your GitHub Pages domain to Firebase Authentication's authorized domains if Firebase asks for it.
+3. Copy the Web App configuration into `firebase-config.js`.
+4. Create a Firebase service account for the private backend. **Never put its JSON key in the GitHub Pages files.**
 
-The Firebase Web configuration is intentionally stored client-side. The API key in a Firebase Web App config is not a server secret; access control comes from Firebase Authentication and Storage Rules.
+## MinIO setup
 
-## Run
+1. Run MinIO/AIStor Free on a machine or host you control. MinIO is S3-compatible object storage. The original MinIO Community Edition is now source-only/archived, while MinIO lists AIStor Free as the community standalone option.
+2. Create a bucket named `aitherfiles` (the API can also create it automatically).
+3. Create a MinIO access key with permission to the AitherFiles bucket.
+4. Run `backend/` with these environment variables:
 
-Open `index.html` in a browser or publish the repository with GitHub Pages after completing Firebase setup.
+```text
+PORT=8787
+MINIO_ENDPOINT=your-minio-host.example.com
+MINIO_PORT=443
+MINIO_USE_SSL=true
+MINIO_ACCESS_KEY=...
+MINIO_SECRET_KEY=...
+MINIO_BUCKET=aitherfiles
+AITHERFILES_ORIGIN=https://your-pages-domain.example
+FIREBASE_SERVICE_ACCOUNT_JSON={...}
+```
+
+5. Install and start the API:
+
+```bash
+cd backend
+npm install
+npm start
+```
+
+6. Put the public HTTPS API URL in `minio-config.js`:
+
+```js
+const minio = {
+  apiUrl: "https://your-aitherfiles-api.example.com"
+};
+export default minio;
+```
+
+7. Publish AitherFiles with GitHub Pages.
+
+### Security
+
+The browser never receives the MinIO secret key. It signs in with Firebase, sends its Firebase ID token to the API, and the API verifies that token before reading or changing objects. The API only allows a user to access keys beginning with their own `users/{Firebase UID}/` prefix.
 
 ## Version
 
-AitherFiles 3.0.0 — Firebase backend migration
+AitherFiles 3.1.0 — Firebase Auth + MinIO storage migration
