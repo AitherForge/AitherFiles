@@ -2,34 +2,41 @@
 
 AitherFiles is a lightweight, mobile-friendly browser file manager for AitherForge.
 
-## Cloud storage
+## Firebase backend
 
-AitherFiles now uses **Puter.js cloud storage** instead of the old Render backend. Puter provides per-user cloud storage through its browser SDK, so AitherFiles does not need its own storage bucket, Render service, API key, or payment information. Puter documents browser-based authentication and cloud file operations through `puter.fs`.
+AitherFiles now uses **Firebase Authentication + Cloud Storage** as its primary cloud backend. The web app remains compatible with GitHub Pages because the Firebase Web SDK runs directly in the browser.
 
-Each signed-in user gets their own Puter storage space. AitherFiles keeps its files inside an `AitherFiles` folder and enforces a **3 GB AitherFiles app limit** before uploads.
+Each signed-in user gets an isolated storage namespace under `users/{Firebase UID}/`. Firebase Storage Rules restrict reads and writes to the authenticated user's own UID. AitherFiles also enforces a **3 GB app-level quota** in the client before uploads.
 
 ## Features
 
-- Clean Aither-style dark interface
-- Responsive layout for iPhone, tablet, and desktop
-- Puter cloud storage and authentication
+- Firebase Email/Password authentication
+- Firebase Google authentication
+- Per-user private Firebase Storage
 - Upload files by picker or drag and drop
 - Search and sort cloud files
 - Recent, images, and documents filters
-- Delete cloud files
+- Open and delete cloud files
 - 3 GB AitherFiles app quota
-- No Render backend required
-- No Aither storage API key required
+- Responsive iPhone, tablet, and desktop interface
 - GitHub Pages compatible
+- No Render backend required for the browser app
 
-## How it works
+## Firebase setup
 
-AitherFiles loads Puter.js directly in the browser. When a user signs in, Puter handles authentication and scopes cloud storage to that user's account. Files are written to the user's Puter cloud storage under the `AitherFiles` directory.
+1. Create a Firebase project and register a Web App.
+2. Enable **Authentication** and turn on Email/Password and/or Google sign-in.
+3. Create/enable **Cloud Storage**.
+4. Copy the Web App configuration into `firebase-config.js`.
+5. Deploy the rules in `storage.rules` to your Firebase Storage bucket.
+6. Add your GitHub Pages domain to Firebase Authentication's authorized domains if Firebase asks for it.
+
+The Firebase Web configuration is intentionally stored client-side. The API key in a Firebase Web App config is not a server secret; access control comes from Firebase Authentication and Storage Rules.
 
 ## Run
 
-Open `index.html` in a browser or publish the repository with GitHub Pages.
+Open `index.html` in a browser or publish the repository with GitHub Pages after completing Firebase setup.
 
 ## Version
 
-AitherFiles 2.0.0
+AitherFiles 3.0.0 — Firebase backend migration
