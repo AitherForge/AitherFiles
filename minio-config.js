@@ -1,6 +1,7 @@
-// Public AitherFiles MinIO API endpoint.
-// Set this to the HTTPS URL of your AitherFiles MinIO API service.
+// Public AitherFiles storage API endpoint.
+// This is the backend API, not the Gozunga S3 endpoint.
+// Keep Gozunga S3 credentials on the backend only.
 const minio = {
-  apiUrl: "YOUR_MINIO_API_URL"
+  apiUrl: "YOUR_AITHERFILES_API_URL"
 };
 export default minio;
