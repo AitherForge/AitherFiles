@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: aitherfiles
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm install --prefix backend
+    startCommand: npm start --prefix backend
+    autoDeploy: true
+    envVars:
+      - key: AITHERFILES_ORIGIN
+        value: https://aitherforge.github.io
+      - key: S3_ENDPOINT
+        value: https://files.fsd1.gozunga.com
+      - key: S3_REGION
+        value: SiouxFalls
+      - key: S3_BUCKET
+        value: aitherfiles
+      - key: FIREBASE_SERVICE_ACCOUNT_JSON
+        sync: false
+      - key: S3_ACCESS_KEY
+        sync: false
+      - key: S3_SECRET_KEY
+        sync: false
