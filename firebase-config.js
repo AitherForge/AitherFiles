@@ -1,12 +1,13 @@
-// AitherFiles Firebase configuration.
-// Replace these placeholder values with the Web App config from your Firebase project.
-// Firebase Web API keys are not secret; access is protected by Firebase Auth and Storage Rules.
+// AitherFiles Firebase Web App configuration.
+// Firebase Web API keys are not secret; access is protected by Firebase Auth and backend/storage rules.
 const config = {
-  apiKey: "YOUR_FIREBASE_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.firebasestorage.app",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_FIREBASE_APP_ID"
+  apiKey: "AIzaSyApbQ7SIZVTcf-LrRiCrVEX2mNIkuCLVHI",
+  authDomain: "aither-66da8.firebaseapp.com",
+  projectId: "aither-66da8",
+  storageBucket: "aither-66da8.firebasestorage.app",
+  messagingSenderId: "625603034284",
+  appId: "1:625603034284:web:c76edf75c4360500e37309",
+  measurementId: "G-EJ0DS5QN89"
 };
+
 export default config;
