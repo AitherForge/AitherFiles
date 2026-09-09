@@ -10,10 +10,12 @@ services:
     envVars:
       - key: AITHERFILES_ORIGIN
         value: https://aitherforge.github.io
+      # Cloudflare R2 S3-compatible endpoint. Set this to:
+      # https://<CLOUDFLARE_ACCOUNT_ID>.r2.cloudflarestorage.com
       - key: S3_ENDPOINT
-        value: https://files.fsd1.gozunga.com
+        sync: false
       - key: S3_REGION
-        value: SiouxFalls
+        value: auto
       - key: S3_BUCKET
         value: aitherfiles
       - key: FIREBASE_SERVICE_ACCOUNT_JSON
